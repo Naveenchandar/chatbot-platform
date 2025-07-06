@@ -9,5 +9,8 @@
     "dev:chatbot": "pnpm --filter chatbot-ui dev",
     "dev:logger": "pnpm --filter logger-api dev",
     "dev": "concurrently \"pnpm dev:chatbot\" \"pnpm dev:logger\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
   }
 }
