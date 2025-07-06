@@ -1,1 +1,1 @@
-export const GRAPHQLURL = `http://192.168.31.226/graphql`
+export const GRAPHQLURL = `http://192.168.31.226:8001/graphql`
