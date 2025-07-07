@@ -9,6 +9,7 @@ import { CustomAlert } from "../../components/custom-alert";
 import { CustomSkeleton } from "../../components/custom-skeleton";
 import { validateLoginForm } from "./helper";
 import { getGraphQLErrorMessage } from "../../utils/graphql-error";
+import { useNavigate } from "react-router-dom";
 
 // Define the mutation
 const LOGIN_MUTATION = gql`
@@ -22,6 +23,7 @@ const LOGIN_MUTATION = gql`
 
 export const LoginPage = () => {
 
+    const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [validationError, setValidationError] = useState<string | null>(null);
@@ -41,8 +43,8 @@ export const LoginPage = () => {
             const response = await login({ variables: { username, password } });
             if(response?.data?.login?.success) {
                 toast.success(response.data.login.message);
-                // Redirect to the home page or dashboard
-                window.location.href = '/';
+                localStorage.setItem('username', username);
+                navigate('/chat');
             }
         } catch (error) {
             console.log('error', error);
