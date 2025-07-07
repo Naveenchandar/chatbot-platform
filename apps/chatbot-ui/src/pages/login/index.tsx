@@ -14,7 +14,6 @@ import { getGraphQLErrorMessage } from "../../utils/graphql-error";
 const LOGIN_MUTATION = gql`
   mutation Login($username: String!, $password: String!) {
     login(username: $username, password: $password) {
-      token
       message
       success
     }
@@ -40,7 +39,11 @@ export const LoginPage = () => {
         }
         try {
             const response = await login({ variables: { username, password } });
-            console.log('response', response);
+            if(response?.data?.login?.success) {
+                toast.success(response.data.login.message);
+                // Redirect to the home page or dashboard
+                window.location.href = '/';
+            }
         } catch (error) {
             console.log('error', error);
         }
