@@ -4,7 +4,7 @@ import {
   SidebarContent,
   SidebarMenu,
   SidebarRail,
-} from "../components/ui/sidebar"
+} from "./ui/sidebar"
 import { gql, useQuery } from "@apollo/client"
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
@@ -18,7 +18,7 @@ const GET_CHAT_HISTORY = gql`
   }
 `;
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function ChatSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { loading, data, error } = useQuery<GetChatHistoryResponse>(GET_CHAT_HISTORY, { variables: { username: localStorage.getItem('username') || '' } })
   if (loading) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>

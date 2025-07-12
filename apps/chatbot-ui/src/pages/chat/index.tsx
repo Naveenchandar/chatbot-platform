@@ -1,4 +1,4 @@
-import { AppSidebar } from "../../components/app-sidebar"
+import { ChatSidebar } from "../../components/chat-sidebar"
 import { Separator } from "../../components/ui/separator"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "../../components/ui/sidebar"
 import { NewChat } from "../../features/new-chat"
@@ -6,7 +6,7 @@ import { NewChat } from "../../features/new-chat"
 export const ChatPage = () => {
     return (
         <SidebarProvider>
-            <AppSidebar />
+            <ChatSidebar />
             <SidebarInset>
                 <header className="bg-background sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b px-4">
                     <SidebarTrigger className="-ml-1" />
