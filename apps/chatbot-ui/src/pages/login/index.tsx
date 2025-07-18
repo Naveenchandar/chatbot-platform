@@ -3,13 +3,14 @@ import { Input } from "../../components/ui/input"
 import Image1 from '../../assets/images/tintu_logo.png';
 import { gql, useMutation } from '@apollo/client'
 import { toast } from "sonner";
-import { useState } from "react";
 import { Frown } from "lucide-react";
 import { CustomAlert } from "../../components/custom-alert";
 import { CustomSkeleton } from "../../components/custom-skeleton";
 import { validateLoginForm } from "./helper";
 import { getGraphQLErrorMessage } from "../../utils/graphql-error";
 import { useNavigate } from "react-router-dom";
+import { useBoundStore } from "../../store";
+import { useShallow } from 'zustand/shallow';
 
 // Define the mutation
 const LOGIN_MUTATION = gql`
@@ -24,9 +25,16 @@ const LOGIN_MUTATION = gql`
 export const LoginPage = () => {
 
     const navigate = useNavigate();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [validationError, setValidationError] = useState<string | null>(null);
+    const { password, passwordChange, updateError, username, usernameChange, validationError } = useBoundStore(
+        useShallow((state) => ({
+            username: state.username,
+            password: state.password,
+            usernameChange: state.usernameChange,
+            passwordChange: state.passwordChange,
+            updateError: state.updateError,
+            validationError: state.validationError,
+        })
+    ))
 
     const [login, { loading, error }] = useMutation(LOGIN_MUTATION);
 
@@ -36,12 +44,12 @@ export const LoginPage = () => {
         const validationError = validateLoginForm(trimmedUsername, trimmedPassword);
         if (validationError) {
             toast.error(validationError);
-            setValidationError(validationError);
+            updateError(validationError);
             return
         }
         try {
             const response = await login({ variables: { username, password } });
-            if(response?.data?.login?.success) {
+            if (response?.data?.login?.success) {
                 toast.success(response.data.login.message);
                 localStorage.setItem('username', username);
                 navigate('/chat');
@@ -74,8 +82,8 @@ export const LoginPage = () => {
                             type="text"
                             value={username}
                             onChange={(e) => {
-                                setValidationError(null);
-                                setUsername(e.target.value);
+                                updateError(null);
+                                usernameChange(e.target.value);
                             }}
                         />
                     </CustomSkeleton>
@@ -87,8 +95,8 @@ export const LoginPage = () => {
                             name="password"
                             value={password}
                             onChange={(e) => {
-                                setValidationError(null);
-                                setPassword(e.target.value)
+                                updateError(null);
+                                passwordChange(e.target.value)
                             }}
                         />
                     </CustomSkeleton>
