@@ -7,6 +7,6 @@ export async function requireAuth() {
 
 export async function requireNoAuth() {
     const username = localStorage.getItem('username');
-    if (username) throw redirect('/chat');
+    if (username) throw redirect('/chat/new');
     return null;
 }

@@ -1,6 +1,7 @@
+import { Link } from "react-router-dom";
 import { SidebarContent, SidebarGroup, SidebarGroupLabel } from "../../../../../components/ui/sidebar";
 import { Skeleton } from "../../../../../components/ui/skeleton";
-import { useChat } from "../../hooks";
+import { useChatsTitle } from "./useChatsTitle";
 
 function SidebarChatsWrapper({ children }: { children: React.ReactNode }) {
     return (
@@ -14,7 +15,7 @@ function SidebarChatsWrapper({ children }: { children: React.ReactNode }) {
 }
 
 export const SidebarChats = () => {
-    const { loading, data, error } = useChat();
+    const { loading, data, error } = useChatsTitle();
     if (loading) {
         return (
             <SidebarChatsWrapper>
@@ -38,12 +39,13 @@ export const SidebarChats = () => {
         if (userContents?.content) {
             return (
                 <SidebarChatsWrapper>
-                    <p
+                    <Link
                         className="leading-7 text-sm mx-2 cursor-default truncate hover:bg-[#0000000f] cursor-pointer"
                         title={userContents?.content}
+                        to={`/chat/${userContents?.id}`}
                     >
                         {userContents?.content}
-                    </p>
+                    </Link>
                 </SidebarChatsWrapper>
             )
         }

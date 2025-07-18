@@ -52,7 +52,7 @@ export const LoginPage = () => {
             if (response?.data?.login?.success) {
                 toast.success(response.data.login.message);
                 localStorage.setItem('username', username);
-                navigate('/chat');
+                navigate('/chat/new');
             }
         } catch (error) {
             console.log('error', error);

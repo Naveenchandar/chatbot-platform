@@ -11,9 +11,19 @@ export const routers = createBrowserRouter([
         errorElement: <div>Error loading page</div>,
     },
     {
-        path: "/chat",
+        path: "/chat/new",
         Component: ChatPage,
         loader: requireAuth,
         errorElement: <div>Error loading chat page</div>,
+    },
+    {
+        path: "/chat/:id",
+        Component: ChatPage,
+        loader: requireAuth,
+        errorElement: <div>Error loading chat page</div>,
+    },
+    {
+        path: "*",
+        Component: () => <div className="text-center">404 - Page Not Found</div>,
     }
 ]);
