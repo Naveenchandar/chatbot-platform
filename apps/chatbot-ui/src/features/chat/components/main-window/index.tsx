@@ -14,7 +14,6 @@ export const MainWindow = () => {
             <div>
                 <PromptArea />
             </div>
-
         </section>
     )
 }
