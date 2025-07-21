@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Textarea } from "../../../../components/ui/textarea"
 import { useState } from "react";
 import { getUserId, getUsername } from "../../../../utils";
@@ -11,6 +11,9 @@ import { GET_CHAT_HISTORY } from "../../../../query";
 export const PromptArea = () => {
 
     const [chatCurrentTextValue, setChatCurrentTextValue] = useState("");
+
+    const { id } = useParams();
+
     const updateMessages = useBoundStore(state => state.updateMessages);
     const navigate = useNavigate();
     const [chatUpdateMutation] = useMutation(CHAT_UPDATE);
@@ -85,15 +88,17 @@ export const PromptArea = () => {
             const { data } = await chatUpdateMutation({
                 variables: {
                     userId: Number(userId),
-                    chatId: userMessageId
+                    chatId: id ? id : userMessageId
                 }
             });
             if (data?.chat_update?.success) {
                 await refetch();
                 // Optional: navigate after 2 seconds
-                navigate(`/chat/${userMessageId}`, {
-                    state: { initialMessage: message }
-                });
+                if (!id) {
+                    navigate(`/chat/${userMessageId}`, {
+                        state: { initialMessage: message }
+                    });
+                }
             }
         } catch (error) {
             console.error("Error sending message:", error);
