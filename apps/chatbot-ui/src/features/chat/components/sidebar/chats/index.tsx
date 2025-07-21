@@ -50,7 +50,7 @@ export const SidebarChats = () => {
                             <Link
                                 className="leading-7 text-sm mx-2 cursor-default truncate hover:bg-[#0000000f] cursor-pointer"
                                 title={item?.content}
-                                to={`/chat/${item?.id}`}
+                                to={`/chat/${item?.chat_id}`}
                                 key={item?.id}
                             >
                                 {item?.content}

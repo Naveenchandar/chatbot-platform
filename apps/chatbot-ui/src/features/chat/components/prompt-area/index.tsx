@@ -2,11 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { Textarea } from "../../../../components/ui/textarea"
 import { useState } from "react";
 import { getUserId, getUsername } from "../../../../utils";
-import type { StreamMessage } from "../../../../types/chat";
 import { STREAMCHATURL } from "../../../../services/url";
 import { useBoundStore } from "../../../../store";
 import { CHAT_UPDATE } from "../../../../mutation";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_CHAT_HISTORY } from "../../../../query";
 
 export const PromptArea = () => {
 
@@ -14,6 +14,12 @@ export const PromptArea = () => {
     const updateMessages = useBoundStore(state => state.updateMessages);
     const navigate = useNavigate();
     const [chatUpdateMutation] = useMutation(CHAT_UPDATE);
+    const userId = getUserId();
+    const { refetch } = useQuery(GET_CHAT_HISTORY, {
+        variables: {
+            userId: Number(userId)
+        }
+    })
 
     const username = getUsername();
 
@@ -58,7 +64,6 @@ export const PromptArea = () => {
 
                 for (const line of lines) {
                     const trimmed = line.trim();
-                    console.log('===', trimmed);
                     if (trimmed.startsWith("data:")) {
                         const jsonPart = trimmed.replace(/^data:\s*/, "");
                         if (jsonPart === 'DONE') break;
@@ -77,14 +82,14 @@ export const PromptArea = () => {
                     }
                 }
             }
-            const userId = getUserId();
             const { data } = await chatUpdateMutation({
                 variables: {
                     userId: Number(userId),
                     chatId: userMessageId
                 }
             });
-            if(data?.chat_update?.success) {
+            if (data?.chat_update?.success) {
+                await refetch();
                 // Optional: navigate after 2 seconds
                 navigate(`/chat/${userMessageId}`, {
                     state: { initialMessage: message }
