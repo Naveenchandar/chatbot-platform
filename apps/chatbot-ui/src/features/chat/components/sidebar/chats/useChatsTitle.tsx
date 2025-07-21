@@ -1,13 +1,13 @@
 import { useQuery } from "@apollo/client"
-import { getUsername } from "../../../../../utils";
+import { getUserId } from "../../../../../utils";
 import { GET_CHAT_HISTORY } from "../../../../../query";
 
 export const useChatsTitle = () => {
-    const username = getUsername();
+    const userId = getUserId();
     const response = useQuery<GetChatHistoryResponse>(GET_CHAT_HISTORY,
         {
-            variables: { username: username },
-            skip: !username,
+            variables: { userId: userId ? +userId : 0 },
+            skip: !userId,
         })
 
     return response

@@ -18,6 +18,7 @@ const LOGIN_MUTATION = gql`
     login(username: $username, password: $password) {
       message
       success
+      user_id
     }
   }
 `
@@ -52,6 +53,7 @@ export const LoginPage = () => {
             if (response?.data?.login?.success) {
                 toast.success(response.data.login.message);
                 localStorage.setItem('username', username);
+                localStorage.setItem('userid', response?.data?.login?.user_id);
                 navigate('/chat/new');
             }
         } catch (error) {
