@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { SidebarContent, SidebarGroup, SidebarGroupLabel } from "../../../../../components/ui/sidebar";
 import { Skeleton } from "../../../../../components/ui/skeleton";
 import { useChatsTitle } from "./useChatsTitle";
@@ -41,20 +41,23 @@ export const SidebarChats = () => {
         userMessages.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         const chats = groupBy(userMessages, 'chat_id');
         const chatValues = Object.values(chats);
-        const flatValues = chatValues.flat(Infinity)  as ChatMessage[];
-        if (flatValues?.length) {
+        const firstMessageOfChats = chatValues?.map(item => item?.[0]);
+        if (firstMessageOfChats?.length) {
             return (
                 <SidebarChatsWrapper>
-                    {flatValues?.map(item => {
+                    {firstMessageOfChats?.map(item => {
                         return (
-                            <Link
-                                className="leading-7 text-sm mx-2 cursor-default truncate hover:bg-[#0000000f] cursor-pointer"
+                            <NavLink
+                                // className="leading-7 text-sm mx-2 cursor-default truncate hover:bg-[#0000000f] cursor-pointer"
+                                className={({ isActive }) =>
+                                    isActive ? "leading-7 text-sm mx-2 cursor-default truncate bg-[#0000000f] cursor-pointer" : "leading-7 text-sm mx-2 cursor-default truncate hover:bg-[#0000000f] cursor-pointer"
+                                }
                                 title={item?.content}
                                 to={`/chat/${item?.chat_id}`}
                                 key={item?.id}
                             >
                                 {item?.content}
-                            </Link>
+                            </NavLink>
                         )
                     })}
                 </SidebarChatsWrapper>
