@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { SidebarContent, SidebarGroup, SidebarGroupLabel } from "../../../../../components/ui/sidebar";
 import { Skeleton } from "../../../../../components/ui/skeleton";
 import { useChatsTitle } from "./useChatsTitle";
+import { groupBy } from "../../../../../utils";
 
 function SidebarChatsWrapper({ children }: { children: React.ReactNode }) {
     return (
@@ -35,17 +36,28 @@ export const SidebarChats = () => {
         )
     }
     if (data?.getChatHistory?.length) {
+        const messages = data?.getChatHistory;
         const userContents = data?.getChatHistory?.filter(item => item.role === 'user')?.[0];
-        if (userContents?.content) {
+        const userMessages = messages.filter(msg => msg.role === 'user');
+        userMessages.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        const chats = groupBy(userMessages, 'chat_id');
+        const chatValues = Object.values(chats);
+        const flatValues = chatValues.flat(Infinity);
+        if (flatValues?.length) {
             return (
                 <SidebarChatsWrapper>
-                    <Link
-                        className="leading-7 text-sm mx-2 cursor-default truncate hover:bg-[#0000000f] cursor-pointer"
-                        title={userContents?.content}
-                        to={`/chat/${userContents?.id}`}
-                    >
-                        {userContents?.content}
-                    </Link>
+                    {flatValues?.map(item => {
+                        return (
+                            <Link
+                                className="leading-7 text-sm mx-2 cursor-default truncate hover:bg-[#0000000f] cursor-pointer"
+                                title={userContents?.content}
+                                to={`/chat/${userContents?.id}`}
+                                key={item?.id}
+                            >
+                                {userContents?.content}
+                            </Link>
+                        )
+                    })}
                 </SidebarChatsWrapper>
             )
         }
