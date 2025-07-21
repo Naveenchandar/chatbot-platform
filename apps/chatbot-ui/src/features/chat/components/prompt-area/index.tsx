@@ -1,18 +1,105 @@
 import { useNavigate } from "react-router-dom";
 import { Textarea } from "../../../../components/ui/textarea"
+import { useState } from "react";
+import { getUserId, getUsername } from "../../../../utils";
+import type { StreamMessage } from "../../../../types/chat";
+import { STREAMCHATURL } from "../../../../services/url";
+import { useBoundStore } from "../../../../store";
+import { CHAT_UPDATE } from "../../../../mutation";
+import { useMutation } from "@apollo/client";
 
 export const PromptArea = () => {
 
+    const [chatCurrentTextValue, setChatCurrentTextValue] = useState("");
+    const updateMessages = useBoundStore(state => state.updateMessages);
     const navigate = useNavigate();
+    const [chatUpdateMutation] = useMutation(CHAT_UPDATE);
+
+    const username = getUsername();
+
+    const streamChat = async (message: string) => {
+        if (!message.trim()) return;
+        try {
+            const userMessageId = crypto.randomUUID();
+            updateMessages({ id: userMessageId, role: 'user', content: message });
+            const response = await fetch(STREAMCHATURL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    username,
+                    message: message,
+                }),
+            });
+
+            const reader = response.body?.getReader();
+            const decoder = new TextDecoder("utf-8");
+
+            if (!reader) {
+                console.error("Failed to get reader from response body");
+                return;
+            }
+
+            let buffer = "";
+
+            setChatCurrentTextValue(""); // Clear input immediately
+            const systemMessageId = crypto.randomUUID();
+            updateMessages({ id: systemMessageId, role: 'system', content: "" });
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+
+                let lines = buffer.split("\n");
+
+                // Keep last partial line in buffer
+                buffer = lines.pop() || "";
+
+                for (const line of lines) {
+                    const trimmed = line.trim();
+                    console.log('===', trimmed);
+                    if (trimmed.startsWith("data:")) {
+                        const jsonPart = trimmed.replace(/^data:\s*/, "");
+                        if (jsonPart === 'DONE') break;
+                        try {
+                            const parsed = JSON.parse(jsonPart);
+                            useBoundStore.setState((state) => ({
+                                messages: state.messages.map((msg) =>
+                                    msg.id === systemMessageId
+                                        ? { ...msg, content: msg.content + parsed.token }
+                                        : msg
+                                ),
+                            }));
+                        } catch (err) {
+                            console.error("Error parsing JSON chunk:", err);
+                        }
+                    }
+                }
+            }
+            const userId = getUserId();
+            const { data } = await chatUpdateMutation({
+                variables: {
+                    userId: Number(userId),
+                    chatId: userMessageId
+                }
+            });
+            if(data?.chat_update?.success) {
+                // Optional: navigate after 2 seconds
+                navigate(`/chat/${userMessageId}`, {
+                    state: { initialMessage: message }
+                });
+            }
+        } catch (error) {
+            console.error("Error sending message:", error);
+        }
+    }
 
     const onKeyDown = async (e: React.KeyboardEvent) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            const id = crypto.randomUUID();
-            const message = (e?.currentTarget as HTMLInputElement)?.value ?? '';
-            navigate(`/chat/${id}`, {
-                state: { initialMessage: message }
-            });
+            const currentValue = (e.currentTarget as HTMLInputElement).value;
+            streamChat(currentValue);
         }
     };
 
@@ -23,6 +110,8 @@ export const PromptArea = () => {
                     placeholder="Ask Anything to Tintu :)"
                     className="rounded-xl overflow-scroll max-h-[15rem] min-h-[7rem]"
                     onKeyDown={onKeyDown}
+                    onChange={(e) => setChatCurrentTextValue(e.target.value)}
+                    value={chatCurrentTextValue}
                 />
             </div>
         </div>

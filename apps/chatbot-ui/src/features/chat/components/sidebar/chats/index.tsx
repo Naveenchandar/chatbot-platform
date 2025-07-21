@@ -37,12 +37,11 @@ export const SidebarChats = () => {
     }
     if (data?.getChatHistory?.length) {
         const messages = data?.getChatHistory;
-        const userContents = data?.getChatHistory?.filter(item => item.role === 'user')?.[0];
         const userMessages = messages.filter(msg => msg.role === 'user');
         userMessages.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         const chats = groupBy(userMessages, 'chat_id');
         const chatValues = Object.values(chats);
-        const flatValues = chatValues.flat(Infinity);
+        const flatValues = chatValues.flat(Infinity)  as ChatMessage[];
         if (flatValues?.length) {
             return (
                 <SidebarChatsWrapper>
@@ -50,11 +49,11 @@ export const SidebarChats = () => {
                         return (
                             <Link
                                 className="leading-7 text-sm mx-2 cursor-default truncate hover:bg-[#0000000f] cursor-pointer"
-                                title={userContents?.content}
-                                to={`/chat/${userContents?.id}`}
+                                title={item?.content}
+                                to={`/chat/${item?.id}`}
                                 key={item?.id}
                             >
-                                {userContents?.content}
+                                {item?.content}
                             </Link>
                         )
                     })}

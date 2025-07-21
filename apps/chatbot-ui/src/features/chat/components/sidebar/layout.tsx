@@ -9,12 +9,20 @@ import {
 import Logo from '../../../../assets/images/tintu_logo.png';
 import { SidebarChats } from "./chats";
 import { useNavigate } from "react-router-dom";
+import { useBoundStore } from "../../../../store";
+import { useShallow } from "zustand/shallow";
 
 export const SidebarLayout = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
 
     const navigate = useNavigate();
+    const { updateNewChat } = useBoundStore(
+        useShallow((state => ({
+            updateNewChat: state.updateNewChat
+        })))
+    )
 
     const handleNewChat = () => {
+        updateNewChat(true);
         navigate(`/chat/new`)
     }
     return (
