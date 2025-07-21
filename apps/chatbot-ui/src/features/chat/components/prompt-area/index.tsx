@@ -18,7 +18,7 @@ export const PromptArea = () => {
 
     return (
         <div>
-            <div className="w-full max-w-3xl m-auto">
+            <div className="w-full max-w-5xl m-auto">
                 <Textarea
                     placeholder="Ask Anything to Tintu :)"
                     className="rounded-xl overflow-scroll max-h-[15rem] min-h-[7rem]"

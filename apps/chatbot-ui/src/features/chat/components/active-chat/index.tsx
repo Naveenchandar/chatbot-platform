@@ -8,8 +8,8 @@ export const ActiveChat = () => {
     // if(initialMessage)
     return (
         <>
-            <AssistantChatSide />
             <UserChatSide />
+            <AssistantChatSide />
         </>
     )
 }
