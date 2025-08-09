@@ -11,6 +11,7 @@ import { getGraphQLErrorMessage } from "../../utils/graphql-error";
 import { useNavigate } from "react-router-dom";
 import { useBoundStore } from "../../store";
 import { useShallow } from 'zustand/shallow';
+import { GoogleLogin } from "@react-oauth/google";
 
 // Define the mutation
 const LOGIN_MUTATION = gql`
@@ -79,6 +80,14 @@ export const LoginPage = () => {
                             variant="destructive"
                         />
                     )}
+                    <GoogleLogin
+                        onSuccess={credentialResponse => {
+                            console.log(credentialResponse);
+                        }}
+                        onError={() => {
+                            console.log('Login Failed');
+                        }}
+                    />
                     <CustomSkeleton loading={loading} className="h-[3rem] w-[20rem] rounded-full">
                         <Input
                             className="rounded-full min-h-[3rem] w-[20rem]"
