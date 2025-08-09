@@ -24,6 +24,19 @@ const LOGIN_MUTATION = gql`
   }
 `
 
+const GOOGLE_AUTH_MUTATION = gql`
+  mutation GoogleAuth($token: String!) {
+    googleAuth(token: $token) {
+      accessToken
+        user {
+            id
+            email
+            name
+        }
+    }
+  }
+`
+
 export const LoginPage = () => {
 
     const navigate = useNavigate();
@@ -39,6 +52,7 @@ export const LoginPage = () => {
         ))
 
     const [login, { loading, error }] = useMutation(LOGIN_MUTATION);
+    const [googleLogin, { loading: isGoogleAuthLoading, error: googleAuthError }] = useMutation(GOOGLE_AUTH_MUTATION);
 
     const onSignIn = async (username: string, password: string) => {
         const trimmedUsername = username.trim();
@@ -65,8 +79,10 @@ export const LoginPage = () => {
         }
     }
 
-    const errorMessage = validationError ?? (error ? getGraphQLErrorMessage(error) : '');
-
+    const normalLoginErrorMessage = validationError ?? (error ? getGraphQLErrorMessage(error) : '');
+    const googleAuthErrorMessage = googleAuthError ? getGraphQLErrorMessage(googleAuthError) : '';
+    const isLoading = loading || isGoogleAuthLoading;
+    const errorMessage = normalLoginErrorMessage || googleAuthErrorMessage;
     return (
         <section className="px-8">
             <div className="min-h-screen flex items-center justify-center">
@@ -81,14 +97,18 @@ export const LoginPage = () => {
                         />
                     )}
                     <GoogleLogin
-                        onSuccess={credentialResponse => {
+                        onSuccess={async credentialResponse => {
                             console.log(credentialResponse);
+                            const { data } = await googleLogin({ variables: { token: credentialResponse.credential } })
+                            localStorage.setItem('username', data?.googleAuth?.user?.name || '');
+                            localStorage.setItem('token', data?.googleAuth?.accessToken);
+                            navigate('/chat/new');
                         }}
                         onError={() => {
                             console.log('Login Failed');
                         }}
                     />
-                    <CustomSkeleton loading={loading} className="h-[3rem] w-[20rem] rounded-full">
+                    <CustomSkeleton loading={isLoading} className="h-[3rem] w-[20rem] rounded-full">
                         <Input
                             className="rounded-full min-h-[3rem] w-[20rem]"
                             placeholder="Enter username"
@@ -101,7 +121,7 @@ export const LoginPage = () => {
                             }}
                         />
                     </CustomSkeleton>
-                    <CustomSkeleton loading={loading} className="h-[3rem] w-[20rem] rounded-full">
+                    <CustomSkeleton loading={isLoading} className="h-[3rem] w-[20rem] rounded-full">
                         <Input
                             className="rounded-full min-h-[3rem] w-[20rem]"
                             placeholder="Enter password"
@@ -114,7 +134,7 @@ export const LoginPage = () => {
                             }}
                         />
                     </CustomSkeleton>
-                    <CustomSkeleton loading={loading} className="h-[3rem] w-[20rem] rounded-full">
+                    <CustomSkeleton loading={isLoading} className="h-[3rem] w-[20rem] rounded-full">
                         <Button
                             className="rounded-full w-[20rem] min-h-[3rem]"
                             variant='default'
@@ -123,7 +143,9 @@ export const LoginPage = () => {
                             Continue
                         </Button>
                     </CustomSkeleton>
-                    {!loading && (
+                    {loading ? (
+                        <p className="text-gray-500">Authenticating...Please wait</p>
+                    ) : (
                         <p>Don't have an account?
                             <a href="/signup" className="text-blue-500 hover:underline">{' '}Sign Up</a>
                         </p>
