@@ -35,7 +35,7 @@ export const LoginPage = () => {
             updateError: state.updateError,
             validationError: state.validationError,
         })
-    ))
+        ))
 
     const [login, { loading, error }] = useMutation(LOGIN_MUTATION);
 
@@ -51,10 +51,13 @@ export const LoginPage = () => {
         try {
             const response = await login({ variables: { username, password } });
             if (response?.data?.login?.success) {
-                toast.success(response.data.login.message);
+                toast.success(response.data.login.success);
                 localStorage.setItem('username', username);
                 localStorage.setItem('userid', response?.data?.login?.user_id);
                 navigate('/chat/new');
+            } else {
+                updateError(response?.data?.login?.message ?? 'Login failed');
+                toast.error(response?.data?.login?.message ?? 'Login failed');
             }
         } catch (error) {
             console.log('error', error);
