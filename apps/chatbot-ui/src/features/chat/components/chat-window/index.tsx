@@ -1,8 +1,8 @@
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useChat } from "../hooks";
 import { Skeleton } from "../../../../components/ui/skeleton";
-import { AssistantChatSide } from "../assistant-chat-side";
-import { UserChatSide } from "../user-chat-side";
+// import { AssistantChatSide } from "../assistant-chat-side";
+// import { UserChatSide } from "../user-chat-side";
 import { ActiveChat } from "../active-chat";
 
 function ChatWindowWrapper({ children }: { children: React.ReactNode }) {
@@ -16,9 +16,9 @@ function ChatWindowWrapper({ children }: { children: React.ReactNode }) {
 export const ChatWindow = () => {
     const params = useParams();
     const chatId = params?.id;
-    const location = useLocation();
+    // const location = useLocation();
     const { data, loading, error } = useChat();
-    const initialMessage = location.state?.initialMessage;
+    // const initialMessage = location.state?.initialMessage;
     if (!chatId) {
         return (
             <h1 className="text-center my-7 text-xl">
