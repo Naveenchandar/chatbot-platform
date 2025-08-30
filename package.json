@@ -8,7 +8,10 @@
   "scripts": {
     "dev:chatbot": "pnpm --filter chatbot-ui dev",
     "dev:logger": "pnpm --filter logger-api dev",
-    "dev": "concurrently \"pnpm dev:chatbot\" \"pnpm dev:logger\""
+    "dev": "concurrently \"pnpm dev:chatbot\" \"pnpm dev:logger\"",
+    "build:chatbot": "pnpm --filter chatbot-ui build",
+    "build:logger": "pnpm --filter logger-api build",
+    "build": "pnpm build:chatbot"
   },
   "devDependencies": {
     "concurrently": "^9.2.0"
