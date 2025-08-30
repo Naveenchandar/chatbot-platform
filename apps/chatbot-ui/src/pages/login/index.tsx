@@ -32,6 +32,7 @@ const GOOGLE_AUTH_MUTATION = gql`
             id
             email
             name
+            profile_pic
         }
     }
   }
@@ -98,10 +99,10 @@ export const LoginPage = () => {
                     )}
                     <GoogleLogin
                         onSuccess={async credentialResponse => {
-                            console.log(credentialResponse);
                             const { data } = await googleLogin({ variables: { token: credentialResponse.credential } })
                             localStorage.setItem('username', data?.googleAuth?.user?.name || '');
-                            localStorage.setItem('token', data?.googleAuth?.accessToken);
+                            localStorage.setItem('profile_pic', data?.googleAuth?.user?.profile_pic || '');
+                            localStorage.setItem('userid', data?.googleAuth?.user?.id || '');
                             navigate('/chat/new');
                         }}
                         onError={() => {
