@@ -67,3 +67,9 @@ export default tseslint.config([
   },
 ])
 ```
+
+curl --location 'https://apiext-stg.mashreqbank.com/mashreqtestexternal/sandbox/oauth2/oauth2/token' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--header 'Authorization: Basic MzEwYzE1OTdlMzZlOTRmNGZmNzY5MWM3MTMwNzA4ODI6ZjY4NTAyZTdkZWQ5ODBmNTJjZmEyNWNmN2I3MGJlNGM=' \
+--data-urlencode 'grant_type=client_credentials' \
+--data-urlencode 'scope=VELOCITY'
