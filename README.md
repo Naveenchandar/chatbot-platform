@@ -67,3 +67,5 @@ export default tseslint.config([
   },
 ])
 ```
+
+https://verifications-stg.mashreq.com/qrcode-viewer-web?data=fM6KWq9cPsEvLeJL2UvOqwd8%2B9q1u1PaBC6nuBnm6yAc8qHJP81qyvyVRWoAhLHHcAVUZ159UP01WI9s4rW%2FnBvRS7pCygdUqHRBZn76QSUg2AV8%2FI2zgkaJmpxhFMiIUCWZnsoiLfg60n42QV%2BKEYhiMQa2ypkx%2FZua3yftqVbnhrvvxRLFwX1wLkW63J7xjOD2Md9MdhpbNNRU4AVRuJbyjANNycPaY1dkT761Zjmcruv%2BeVz7XlmQZtDP4mZ6K%2FIZQRWlN2AFfU%2FwvkWqwbD6RW2qqG0ERh1T%2BjVCdTcbdVf7fNFunOB5dy5TlBYiujlfrnBYqlUHFHqJBtKy8w%3D%3D&requestType=QRL
